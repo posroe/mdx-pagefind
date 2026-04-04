@@ -1,0 +1,54 @@
+{
+  "name": "mdx-pagefind",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "mdx-pagefind": "out/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.2",
+    "@types/yargs": "^17.0.35"
+  },
+  "peerDependencies": {
+    "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "pagefind": "^1.4.0",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-html": "^16.0.1",
+    "remark-math": "^6.0.0",
+    "remark-mdx": "^3.1.1",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.5",
+    "unist-util-remove": "^4.0.0",
+    "yargs": "^18.0.0"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mdx",
+    "pagefind",
+    "search",
+    "static",
+    "site",
+    "blog",
+    "documentation",
+    "cli",
+    "tool",
+    "utility",
+    "markdown",
+    "remark",
+    "unified",
+    "html",
+    "build",
+    "generate",
+    "index",
+    "search-index",
+    "search-engine",
+    "search-tool",
+    "search-utility",
+    "search-cli",
+    "search-build",
+    "search-generate"
+  ]
+}
