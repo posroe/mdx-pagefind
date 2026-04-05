@@ -39,10 +39,10 @@ mdx-pagefind [options]
 mdx-pagefind
 
 # Custom paths
-mdx-pagefind --site docs --out .build --output-path public/search
+mdx-pagefind --site docs --out .build --output-path public/pagefind
 
 # Short flags
-mdx-pagefind -s docs -o .build -p public/search
+mdx-pagefind -s docs -o .build -p public/pagefind
 ```
 
 ## Project structure
