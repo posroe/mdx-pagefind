@@ -9,9 +9,11 @@ import { walk } from "./walk";
 
 interface BuildOptions {
     sourceRoot: string;
-    outputRoot: string;
-    searchPath: string;
 }
+
+const ROOT = ".pagefind";
+const OUTPUT_ROOT = path.join(ROOT, "cache");
+const GENERATED_PATH = path.join(ROOT, "generated");
 
 async function parseArgs(): Promise<BuildOptions> {
     const argv = await yargs(hideBin(process.argv))
@@ -24,45 +26,40 @@ async function parseArgs(): Promise<BuildOptions> {
                 default: "src/contents",
                 describe: "Directory containing source MDX files",
                 normalize: true,
-            },
-            out: {
-                type: "string",
-                alias: "o",
-                default: "out",
-                describe: "Intermediate HTML output directory",
-                normalize: true,
-            },
-            "output-path": {
-                type: "string",
-                alias: "p",
-                default: "public/pagefind",
-                describe: "Final Pagefind index output path",
-                normalize: true,
-            },
+            }
         })
         .help()
         .alias("help", "h")
         .parse();
 
     return {
-        sourceRoot: path.resolve(process.cwd(), argv.site),
-        outputRoot: path.resolve(process.cwd(), argv.out),
-        searchPath: path.resolve(process.cwd(), argv["output-path"]),
+        sourceRoot: path.resolve(process.cwd(), argv.site)
     };
 }
 
 async function build(options: BuildOptions): Promise<void> {
-    const { sourceRoot, outputRoot, searchPath } = options;
+    const { sourceRoot } = options;
 
     await fs.access(sourceRoot).catch(() => {
         throw new Error(`Source directory not found: ${sourceRoot}`);
     });
 
-    await fs.rm(outputRoot, { recursive: true, force: true });
-    await fs.mkdir(outputRoot, { recursive: true });
+    await fs.rm(ROOT, { recursive: true, force: true });
+    await fs.mkdir(OUTPUT_ROOT, { recursive: true });
 
-    await walk(sourceRoot, outputRoot);
-    await createPagefind(outputRoot, searchPath);
+    await walk(sourceRoot, OUTPUT_ROOT);
+    await createPagefind(OUTPUT_ROOT, GENERATED_PATH);
+
+    await fs.cp(
+        path.join(__dirname, "../assets/index.d.ts"),
+        path.join(GENERATED_PATH, "index.d.ts"),
+        { recursive: true }
+    );
+
+    await fs.rename(
+        path.join(GENERATED_PATH, "pagefind.js"),
+        path.join(GENERATED_PATH, "index.js")
+    );
 }
 
 async function main(): Promise<void> {
@@ -70,8 +67,8 @@ async function main(): Promise<void> {
 
     console.log("Starting build...");
     console.log(`  source : ${options.sourceRoot}`);
-    console.log(`  output : ${options.outputRoot}`);
-    console.log(`  index  : ${options.searchPath}`);
+    console.log(`  output : ${OUTPUT_ROOT}`);
+    console.log(`  index  : ${GENERATED_PATH}`);
 
     try {
         await build(options);
