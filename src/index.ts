@@ -9,6 +9,7 @@ import { walk } from "./walk";
 
 interface BuildOptions {
     sourceRoot: string;
+    publicRoot: string;
 }
 
 const ROOT = ".pagefind";
@@ -20,11 +21,18 @@ async function parseArgs(): Promise<BuildOptions> {
         .scriptName("mdx-pagefind")
         .usage("$0 [options]", "Build MDX files to HTML and index with Pagefind")
         .options({
-            site: {
+            source: {
                 type: "string",
                 alias: "s",
                 default: "src/contents",
                 describe: "Directory containing source MDX files",
+                normalize: true,
+            },
+            public: {
+                type: "string",
+                alias: "p",
+                default: "public",
+                describe: "Directory containing public files",
                 normalize: true,
             }
         })
@@ -33,12 +41,13 @@ async function parseArgs(): Promise<BuildOptions> {
         .parse();
 
     return {
-        sourceRoot: path.resolve(process.cwd(), argv.site)
+        sourceRoot: path.resolve(process.cwd(), argv.source),
+        publicRoot: path.resolve(process.cwd(), argv.public)
     };
 }
 
 async function build(options: BuildOptions): Promise<void> {
-    const { sourceRoot } = options;
+    const { sourceRoot, publicRoot } = options;
 
     await fs.access(sourceRoot).catch(() => {
         throw new Error(`Source directory not found: ${sourceRoot}`);
@@ -56,9 +65,43 @@ async function build(options: BuildOptions): Promise<void> {
         { recursive: true }
     );
 
+    await fs.mkdir(path.join(publicRoot, "pagefind"), { recursive: true });
+
     await fs.rename(
         path.join(GENERATED_PATH, "pagefind.js"),
         path.join(GENERATED_PATH, "index.js")
+    );
+
+    await fs.rename(
+        path.join(GENERATED_PATH, "fragment"),
+        path.join(publicRoot, "pagefind", "fragment")
+    );
+
+    await fs.rename(
+        path.join(GENERATED_PATH, "index"),
+        path.join(publicRoot, "pagefind", "index")
+    );
+
+    await fs.rename(
+        path.join(GENERATED_PATH, "pagefind-entry.json"),
+        path.join(publicRoot, "pagefind", "pagefind-entry.json")
+    );
+
+    await fs.rename(
+        path.join(GENERATED_PATH, "wasm.unknown.pagefind"),
+        path.join(publicRoot, "pagefind", "wasm.unknown.pagefind")
+    );
+
+    const dir = await fs.readdir(GENERATED_PATH, { withFileTypes: true });
+    const pfMetaFile = dir.find((file) => file.name.endsWith(".pf_meta"));
+
+    if (!pfMetaFile) {
+        throw new Error("No pf_meta file found");
+    }
+
+    await fs.rename(
+        path.join(GENERATED_PATH, pfMetaFile.name),
+        path.join(publicRoot, "pagefind", pfMetaFile.name)
     );
 }
 

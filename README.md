@@ -24,24 +24,26 @@ mdx-pagefind [options]
 
 ### Options
 
-| Option   | Alias | Default        | Description                                       |
-| -------- | ----- | -------------- | ------------------------------------------------- |
-| `--site` | `-s`  | `src/contents` | Directory containing source MDX or Markdown files |
-| `--help` | `-h`  |                | Show help                                         |
+| Option     | Alias | Default                                   | Description                                       |
+| ---------- | ----- | ----------------------------------------- | ------------------------------------------------- |
+| `--source` | `-s`  | `src/contents`                            | Directory containing source MDX or Markdown files |
+| `--public` | `-p`  | Your web server's public/static directory | Directory containing public files                 |
+| `--help`   | `-h`  |                                           | Show help                                         |
 
 ### Example
 
 ```bash
-mdx-pagefind --site docs/content
+mdx-pagefind --source docs/content --public public
 ```
 
 ## How It Works
 
 1. All `.md` and `.mdx` files under the source directory are located recursively.
 2. Each file is processed through a remark pipeline that strips MDX-specific nodes (JSX elements, ESM imports, expressions) and converts the remaining content to HTML.
-3. The resulting HTML files are written to `.pagefind/cache/`, mirroring the original directory structure.
-4. Pagefind indexes the HTML output and writes the search index to `.pagefind/generated/`.
-5. The generated directory is usable as a self-contained search module, with `index.js` as the entry point and bundled TypeScript declarations at `index.d.ts`.
+3. The resulting HTML files are written to `.pagefind/cache/`.
+4. Pagefind indexes the HTML output and generates search assets.
+5. Runtime Assets (`wasm`, `fragments`, etc.) are moved to your public directory (`public/pagefind/`) so the browser can fetch them via HTTP.
+6. Development Assets (`index.js`, `index.d.ts`) are kept in `.pagefind/generated/` for TypeScript integration.
 
 ## Output Structure
 
@@ -51,6 +53,9 @@ mdx-pagefind --site docs/content
   generated/      Pagefind search index
     index.js      Entry point (re-exported from pagefind.js)
     index.d.ts    TypeScript declarations
+
+public/            Your public folder
+  pagefind/        Production runtime assets (WASM, Metadata, Fragments)
 ```
 
 ## Integrating the Search Index
@@ -115,6 +120,6 @@ const debouncedSearch: (
 The remark pipeline includes support for the following:
 
 - GitHub Flavored Markdown (tables, strikethrough, task lists)
-- Math expressions via remark-math
+- Math expressions via `remark-math`
 - YAML frontmatter
 - MDX (JSX elements and ESM imports are stripped before indexing)

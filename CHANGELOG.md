@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## [1.1.1] - 2026-04-20
+
+### Fixed
+
+- **Metadata Loading Error**: Fixed "Failed to load Pagefind metadata" error in the browser by correctly moving runtime assets (`wasm`, `fragments`, `index`, and `.pf_meta`) to the public directory.
+- **Dynamic Asset Discovery**: Added logic to automatically find and move the hashed `.pf_meta` file.
+
+### Added
+
+- **New CLI Option**: Added `--public` (alias `-p`) flag to specify the web server's public directory (defaults to `public`).
+
+### Changed
+
+- **[Breaking Change] Option Renaming**: Renamed `--site` flag to `--source` (alias `-s`) to better reflect its purpose as the source content directory.
+- **Asset Distribution**:
+  - Development files (`index.js`, `index.d.ts`) remain in `.pagefind/generated`.
+  - Production assets are now moved to `public/pagefind/` to be accessible via HTTP.
+
 ## [1.1.0] - 2026-04-20
 
 ### Added
