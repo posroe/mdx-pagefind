@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [1.1.2] - 2026-04-20
+
+### Fixed
+
+- **Permission Errors (EPERM)**: Fixed an issue where `rename` operations would fail due to existing files or cross-drive limitations.
+- **Build Reliability**: Added automatic cleanup of the `public/pagefind` directory before moving new assets to ensure a clean state and prevent file lock conflicts.
+
 ## [1.1.1] - 2026-04-20
 
 ### Fixed

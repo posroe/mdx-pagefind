@@ -65,7 +65,9 @@ async function build(options: BuildOptions): Promise<void> {
         { recursive: true }
     );
 
-    await fs.mkdir(path.join(publicRoot, "pagefind"), { recursive: true });
+    const pagefindRoot = path.join(publicRoot, "pagefind");
+    await fs.rm(pagefindRoot, { recursive: true, force: true });
+    await fs.mkdir(pagefindRoot, { recursive: true });
 
     await fs.rename(
         path.join(GENERATED_PATH, "pagefind.js"),
@@ -109,9 +111,10 @@ async function main(): Promise<void> {
     const options = await parseArgs();
 
     console.log("Starting build...");
-    console.log(`  source : ${options.sourceRoot}`);
-    console.log(`  output : ${OUTPUT_ROOT}`);
-    console.log(`  index  : ${GENERATED_PATH}`);
+    console.log(`  source : ${path.relative(process.cwd(), options.sourceRoot)}`);
+    console.log(`  output : ${path.relative(process.cwd(), OUTPUT_ROOT)}`);
+    console.log(`  index  : ${path.relative(process.cwd(), GENERATED_PATH)}`);
+    console.log(`  public : ${path.relative(process.cwd(), options.publicRoot)}`);
 
     try {
         await build(options);
