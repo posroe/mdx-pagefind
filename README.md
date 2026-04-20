@@ -3,19 +3,17 @@
 [![npm version](https://badge.fury.io/js/mdx-pagefind.svg)](https://www.npmjs.com/package/mdx-pagefind)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://www.gnu.org/licenses/mit)
 
-Converts MDX/MD files to HTML and generates a [Pagefind](https://pagefind.app) search index.
+A command-line tool for indexing MDX and Markdown files with [Pagefind](https://pagefind.app/). It converts source files to HTML and generates a static search index that can be consumed by any frontend.
 
-## How it works
+## Requirements
 
-1. Walks the source directory recursively and finds all `.md` and `.mdx` files
-2. Converts each file to HTML via a remark pipeline (strips JSX nodes, supports GFM, math, frontmatter)
-3. Writes intermediate HTML files to an output directory
-4. Runs Pagefind over the output directory to produce a search index
+- Node.js 18 or later
+- TypeScript 6 (peer dependency)
 
 ## Installation
 
 ```bash
-npm i -D mdx-pagefind
+npm install mdx-pagefind
 ```
 
 ## Usage
@@ -26,41 +24,97 @@ mdx-pagefind [options]
 
 ### Options
 
-| Flag            | Alias | Default           | Description                           |
-| --------------- | ----- | ----------------- | ------------------------------------- |
-| `--site`        | `-s`  | `src/contents`    | Source directory containing MDX files |
-| `--out`         | `-o`  | `out`             | Intermediate HTML output directory    |
-| `--output-path` | `-p`  | `public/pagefind` | Final Pagefind index output path      |
+| Option   | Alias | Default        | Description                                       |
+| -------- | ----- | -------------- | ------------------------------------------------- |
+| `--site` | `-s`  | `src/contents` | Directory containing source MDX or Markdown files |
+| `--help` | `-h`  |                | Show help                                         |
 
-### Examples
+### Example
 
 ```bash
-# Use defaults
-mdx-pagefind
-
-# Custom paths
-mdx-pagefind --site docs --out .build --output-path public/pagefind
-
-# Short flags
-mdx-pagefind -s docs -o .build -p public/pagefind
+mdx-pagefind --site docs/content
 ```
 
-## Project structure
+## How It Works
+
+1. All `.md` and `.mdx` files under the source directory are located recursively.
+2. Each file is processed through a remark pipeline that strips MDX-specific nodes (JSX elements, ESM imports, expressions) and converts the remaining content to HTML.
+3. The resulting HTML files are written to `.pagefind/cache/`, mirroring the original directory structure.
+4. Pagefind indexes the HTML output and writes the search index to `.pagefind/generated/`.
+5. The generated directory is usable as a self-contained search module, with `index.js` as the entry point and bundled TypeScript declarations at `index.d.ts`.
+
+## Output Structure
 
 ```
-index.ts        CLI entrypoint — parses args and orchestrates the build
-walk.ts         Recursively walks the source directory and converts MDX to HTML
-processor.ts    Unified/remark pipeline (MDX, GFM, math, frontmatter)
-html.ts         Wraps converted HTML in a full HTML document scaffold
-pagefind.ts     Creates the Pagefind search index from the HTML output
-types.ts        Shared TypeScript interfaces
+.pagefind/
+  cache/          HTML files converted from MDX sources
+  generated/      Pagefind search index
+    index.js      Entry point (re-exported from pagefind.js)
+    index.d.ts    TypeScript declarations
 ```
 
-## Output
+## Integrating the Search Index
 
-The build produces two artifacts:
+### TypeScript Configuration
 
-- **Intermediate HTML** (`--out`) — one `.html` file per source MDX file, used as input for Pagefind. Safe to delete after indexing.
-- **Pagefind index** (`--output-path`) — static search assets served alongside your site.
+To resolve the `pagefind` module alias, add the following to your `tsconfig.json`:
 
-To use the search index, load `/<output-path>/pagefind.js` in your frontend and follow the [Pagefind UI docs](https://pagefind.app/docs/).
+```jsonc
+{
+  "compilerOptions": {
+    "paths": {
+      "pagefind": ["./.pagefind/generated"],
+    },
+  },
+}
+```
+
+### Usage
+
+Import the generated module using the `pagefind` alias:
+
+```typescript
+import { debouncedSearch } from "pagefind";
+
+const results = await debouncedSearch("your query");
+if (results) {
+  for (const result of results.results) {
+    const data = await result.data();
+    console.log(data.meta.title, data.url, data.excerpt);
+  }
+}
+```
+
+### Types
+
+```typescript
+interface PagefindResult {
+  url: string;
+  excerpt: string;
+  meta: { title?: string };
+  sub_results: PagefindSubResult[];
+}
+
+interface PagefindSubResult {
+  title: string;
+  url: string;
+  excerpt: string;
+}
+
+const debouncedSearch: (
+  query: string,
+  options?: Record<string, any>,
+  debounce?: number,
+) => Promise<{
+  results: Array<{ data: () => Promise<PagefindResult> }>;
+} | null>;
+```
+
+## Supported Syntax
+
+The remark pipeline includes support for the following:
+
+- GitHub Flavored Markdown (tables, strikethrough, task lists)
+- Math expressions via remark-math
+- YAML frontmatter
+- MDX (JSX elements and ESM imports are stripped before indexing)
