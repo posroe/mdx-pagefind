@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [1.1.3] - 2026-04-21
+
+### Added
+
+- **TypeScript Support**: Added type support into `PagefindSearchFragment` interface for metadata in MDX files.
+
 ## [1.1.2] - 2026-04-20
 
 ### Fixed

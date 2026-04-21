@@ -30,7 +30,7 @@ export interface PagefindSubResult {
     anchor?: PagefindSearchAnchor;
 }
 
-export interface PagefindSearchFragment {
+export interface PagefindSearchFragment<M = Record<string, string>> {
     url: string;
     raw_url?: string;
     content: string;
@@ -41,7 +41,7 @@ export interface PagefindSearchFragment {
     locations: number[];
     weighted_locations: PagefindWordLocation[];
     filters: Record<string, string[]>;
-    meta: Record<string, string>;
+    meta: M;
     anchors: PagefindSearchAnchor[];
 }
 
