@@ -1,10 +1,12 @@
 import { unified } from "unified";
 import remarkParse from "remark-parse";
-import remarkHtml from "remark-html";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkMdx from "remark-mdx";
+import remarkRehype from "remark-rehype";
+import rehypeSlug from "rehype-slug";
+import rehypeStringify from "rehype-stringify";
 import { remove } from "unist-util-remove";
 
 const MDX_NODE_TYPES = [
@@ -28,4 +30,6 @@ export const processor = unified()
     .use(remarkFrontmatter)
     .use(remarkGfm)
     .use(remarkMath)
-    .use(remarkHtml, { sanitize: false });
+    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeSlug)
+    .use(rehypeStringify);

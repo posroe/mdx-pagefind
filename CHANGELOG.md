@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## [1.1.4] - 2026-04-22
+
+### Added
+
+- **Sub-results Enhancement**: Added support for sub-heading search within pages by automatically injecting `id` into HTML tags (`h1`-`h6`), allowing Pagefind to accurately identify anchor link positions.
+
+### Changed
+
+- **Enhanced HTML Pipeline**: Switched from `remark-html` to the Remark-Rehype pipeline (`remark-rehype` + `rehype-stringify`) for more stable conversion and better support for HTML tag attribute management.
+
+- **Heading Slugification**: Installed and enabled `rehype-slug` to handle the generation of URL-friendly IDs for all headings in the content.
+
+### Removed
+
+- **Legacy Remark Plugin**: Removed `remark-html` in favor of the more flexible Rehype standard.
+
 ## [1.1.3] - 2026-04-21
 
 ### Added
