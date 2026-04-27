@@ -17,7 +17,7 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "outDir": "./out",
+    "outDir": "./dist",
     "rootDir": "./src"
   },
   "ts-node": {
@@ -30,7 +30,7 @@
   ],
   "exclude": [
     "node_modules",
-    "out",
+    "dist",
     "public"
   ]
 }
