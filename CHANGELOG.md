@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [1.1.6] - 2026-04-28
+
+### Fixed
+
+- **Path Resolution**: Fixed `ERR_MODULE_NOT_FOUND` on Node.js by changing `moduleResolution` from `bundler` to `nodenext`, which enforces `.js` extensions in compiled import paths required by Node.js ESM.
+
+- **ESM Compatibility**: Replaced `__dirname` with `fileURLToPath(import.meta.url)` to fix path resolution in ESM modules.
+
+- **Shebang**: Fixed `#!/usr/bin/env` to `#!/usr/bin/env node` for correct CLI.
+
 ## [1.1.5] - 2026-04-27
 
 ### Changed

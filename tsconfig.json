@@ -1,29 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "ignoreDeprecations": "5.0",
-    "lib": [
-      "ESNext"
-    ],
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "types": [
       "node"
     ],
     "strict": true,
-    "noImplicitAny": true,
-    "skipLibCheck": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
+    "skipLibCheck": true,
     "outDir": "./dist",
     "rootDir": "./src"
-  },
-  "ts-node": {
-    "esm": true,
-    "experimentalSpecifierResolution": "node",
-    "transpileOnly": true
   },
   "include": [
     "src/**/*"
@@ -31,6 +18,5 @@
   "exclude": [
     "node_modules",
     "dist",
-    "public"
   ]
 }
