@@ -18,6 +18,7 @@ const argv = await yargs(hideBin(process.argv))
     })
     .parse();
 
-build(path.resolve(argv.source), path.resolve(argv.public))
-    .then(() => console.log("Build complete."))
-    .catch(e => { console.error(e); process.exit(1); });
+build(path.resolve(argv.source), path.resolve(argv.public)).catch(e => {
+    console.error(e);
+    process.exit(1);
+});
