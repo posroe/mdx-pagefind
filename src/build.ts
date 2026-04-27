@@ -29,6 +29,11 @@ export async function build(srcRoot: string, pubRoot: string): Promise<void> {
     await fs.mkdir(CACHE, { recursive: true });
     await walk(srcRoot, CACHE);
     await execAsync(`pagefind --site ${CACHE} --output-path ${GENERATED}`);
+    await fs.cp(
+        path.join(__dirname, "../assets/index.d.ts"),
+        path.join(GENERATED, "index.d.ts"),
+        { recursive: true }
+    );
 
     const pubPf = path.join(pubRoot, "pagefind");
     await fs.rm(pubPf, { recursive: true, force: true });
