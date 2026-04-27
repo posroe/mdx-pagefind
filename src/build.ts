@@ -4,6 +4,7 @@ import { exec } from "node:child_process";
 import { promisify } from "node:util";
 import { processor } from "./processor.js";
 import { fileURLToPath } from "node:url";
+import pkg from "../package.json" with { type: "json" };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,6 +30,10 @@ async function walk(src: string, out: string, dir = ""): Promise<void> {
 }
 
 export async function build(srcRoot: string, pubRoot: string): Promise<void> {
+    const start = Date.now();
+
+    console.log(`\n  mdx-pagefind v${pkg.version}\n`);
+
     await fs.rm(ROOT, { recursive: true, force: true });
     await fs.mkdir(CACHE, { recursive: true });
     await walk(srcRoot, CACHE);
@@ -49,4 +54,13 @@ export async function build(srcRoot: string, pubRoot: string): Promise<void> {
     const meta = (await fs.readdir(GENERATED)).find(f => f.endsWith(".pf_meta"));
     if (!meta) throw new Error("No .pf_meta file found");
     await fs.rename(path.join(GENERATED, meta), path.join(pubPf, meta));
+
+    const files = await fs.readdir(CACHE, { recursive: true });
+    const indexed = files.filter(f => String(f).endsWith(".html")).length;
+    const duration = Date.now() - start;
+
+    console.log(`  source   ${srcRoot}`);
+    console.log(`  output   ${pubPf}`);
+    console.log(`  indexed  ${indexed} files`);
+    console.log(`\n  built in ${duration}ms\n`);
 }
