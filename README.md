@@ -1,14 +1,10 @@
 # mdx-pagefind
 
-[![npm version](https://badge.fury.io/js/mdx-pagefind.svg)](https://www.npmjs.com/package/mdx-pagefind)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://www.gnu.org/licenses/mit)
+[![npm version](https://badge.fury.io/js/mdx-pagefind.svg)](https://www.npmjs.com/package/mdx-pagefind)
+[![npm download](https://img.shields.io/npm/dt/mdx-pagefind)](https://www.npmjs.com/package/mdx-pagefind)
 
 A command-line tool for indexing MDX and Markdown files with [Pagefind](https://pagefind.app/). It converts source files to HTML and generates a static search index that can be consumed by any frontend.
-
-## Requirements
-
-- Node.js 18 or later
-- TypeScript 6 (peer dependency)
 
 ## Installation
 
@@ -64,11 +60,13 @@ public/            Your public folder
 
 To resolve the `pagefind` module alias, add the following to your `tsconfig.json`:
 
+> **Warning:** If you want to import the generated module, use an alias (e.g., pagefind-generated) instead of pagefind, as the build process may confuse it with the original pagefind module.
+
 ```jsonc
 {
   "compilerOptions": {
     "paths": {
-      "pagefind": ["./.pagefind/generated"],
+      "pagefind-generated": ["./.pagefind/generated"],
     },
   },
 }
@@ -79,7 +77,7 @@ To resolve the `pagefind` module alias, add the following to your `tsconfig.json
 Import the generated module using the `pagefind` alias:
 
 ```typescript
-import { debouncedSearch } from "pagefind";
+import { debouncedSearch } from "pagefind-generated";
 
 const results = await debouncedSearch("your query");
 if (results) {
@@ -88,31 +86,6 @@ if (results) {
     console.log(data.meta.title, data.url, data.excerpt);
   }
 }
-```
-
-### Types
-
-```typescript
-interface PagefindResult {
-  url: string;
-  excerpt: string;
-  meta: { title?: string };
-  sub_results: PagefindSubResult[];
-}
-
-interface PagefindSubResult {
-  title: string;
-  url: string;
-  excerpt: string;
-}
-
-const debouncedSearch: (
-  query: string,
-  options?: Record<string, any>,
-  debounce?: number,
-) => Promise<{
-  results: Array<{ data: () => Promise<PagefindResult> }>;
-} | null>;
 ```
 
 ## Supported Syntax

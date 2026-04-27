@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [1.1.5] - 2026-04-27
+
+### Changed
+
+- **Pagefind Execution**: Replaced the Pagefind Node.js API (`createIndex`) with a direct CLI call (`pagefind --site ... --output-path ...`) to fix a hang issue caused by the binary spawning a background process on certain environments (e.g., Vercel).
+
 ## [1.1.4] - 2026-04-22
 
 ### Added
@@ -71,8 +77,6 @@
 
 - Removed internal project file references (e.g., `walk.ts`, `processor.ts`) from README to focus on library usage.
 - Removed documentation for legacy Pagefind UI integration in favor of the new `pagefind` module alias approach.
-
----
 
 ## [1.0.0] - Initial Release
 

@@ -15,21 +15,19 @@ const MDX_NODE_TYPES = [
     "mdxjsEsm",
     "mdxTextExpression",
     "mdxFlowExpression",
-] as const;
-
-function remarkStripMdx() {
-    return (tree: any) => {
-        remove(tree, (node: any) => MDX_NODE_TYPES.includes(node.type));
-    };
-}
+];
 
 export const processor = unified()
     .use(remarkParse)
     .use(remarkMdx)
-    .use(remarkStripMdx)
+    .use(() => (tree) => {
+        remove(tree, (node) => MDX_NODE_TYPES.includes(node.type));
+    })
     .use(remarkFrontmatter)
     .use(remarkGfm)
     .use(remarkMath)
-    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(remarkRehype, {
+        allowDangerousHtml: true
+    })
     .use(rehypeSlug)
     .use(rehypeStringify);

@@ -1,15 +1,17 @@
 {
   "name": "mdx-pagefind",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "type": "module",
+  "scripts": {
+    "build": "bun tsc",
+    "dev": "bun tsc --watch"
+  },
   "bin": {
-    "mdx-pagefind": "out/index.js"
+    "mdx-pagefind": "dist/index.js"
   },
   "devDependencies": {
     "@types/node": "^25.5.2",
-    "@types/yargs": "^17.0.35"
-  },
-  "peerDependencies": {
+    "@types/yargs": "^17.0.35",
     "typescript": "^6.0.2"
   },
   "dependencies": {
