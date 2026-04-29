@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [1.1.7] - 2026-04-30
+
+### Fixed
+
+- **Missing Worker Files**: Fixed `The Pagefind web worker encountered an error, falling back to main thread` error in the browser for Pagefind assets, by moving `pagefind-worker.js` file to the `public/pagefind` directory for runtime loading.
+
 ## [1.1.6] - 2026-04-28
 
 ### Fixed

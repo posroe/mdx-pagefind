@@ -48,7 +48,7 @@ export async function build(srcRoot: string, pubRoot: string): Promise<void> {
     await fs.rm(pubPf, { recursive: true, force: true });
     await fs.mkdir(pubPf, { recursive: true });
     await fs.rename(path.join(GENERATED, "pagefind.js"), path.join(GENERATED, "index.js"));
-    for (const name of ["fragment", "index", "pagefind-entry.json", "wasm.unknown.pagefind"]) {
+    for (const name of ["fragment", "index", "pagefind-entry.json", "wasm.unknown.pagefind", "pagefind-worker.js"]) {
         await fs.rename(path.join(GENERATED, name), path.join(pubPf, name));
     }
     const meta = (await fs.readdir(GENERATED)).find(f => f.endsWith(".pf_meta"));
